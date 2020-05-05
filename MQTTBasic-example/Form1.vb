@@ -20,6 +20,8 @@ Public Class Form1
                 Dim clientId As String = Guid.NewGuid().ToString()
 
                 AddHandler client.MqttMsgPublishReceived, AddressOf Client_MqttMsgPublishReceived
+                AddHandler client.ConnectionClosed, AddressOf Client_Disconnect
+
                 client.Connect(clientId)
 
                 If client.IsConnected Then
@@ -45,11 +47,14 @@ Public Class Form1
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
         If (client IsNot Nothing AndAlso client.IsConnected()) Then
             client.Disconnect()
-            ToolStripStatusLabel1.Text = "Disconnected"
         Else
             ToolStripStatusLabel1.Text = "Error"
         End If
     End Sub
+    Private Sub Client_Disconnect(sender As Object, e As EventArgs)
+        ToolStripStatusLabel1.Text = "Connection Lost"
+    End Sub
+
 
     Private Sub Client_MqttMsgPublishReceived(ByVal sender As Object, ByVal e As MqttMsgPublishEventArgs)
         Msg.AppendLine()
